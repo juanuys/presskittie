@@ -13,8 +13,6 @@
 
  The PHP file basically downloads [this bundle](https://vlambeer.com/kit/presskit/archive.zip), which consists of more PHP files, then does a bunch of setup, but we've done all that for you. All you need to do is clone this repo, run it with Docker, customise the kit, then publish.
 
-**presskittie()** 
-
 # A few easy steps to presskit bliss
 
 ## Run

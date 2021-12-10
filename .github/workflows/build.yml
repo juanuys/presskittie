@@ -1,0 +1,35 @@
+name: Deploy static site
+
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  docker:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+
+    - name: Start containers
+      run: docker-compose -f "docker-compose.yml" up -d --build
+
+    - name: Crawl
+      run: |
+        while ! nc -z localhost 8080; do sleep 0.1; done; # Wait for server to start
+        mkdir -p output
+        wget -P output -nH --mirror --adjust-extension --page-requisites --no-parent http://127.0.0.1:8080
+
+    - name: Stop containers
+      if: always()
+      run: docker-compose -f "docker-compose.yml" down
+    
+    - name: Deploy
+      uses: JamesIves/github-pages-deploy-action@releases/v4
+      with:
+        branch: gh-pages
+        folder: output
+        token:  ${{ secrets.ACCESS_TOKEN }}
